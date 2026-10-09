@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { isFresh, chooseRates, pickOficial, feeKey, FEE_TTL_MS } from "../lib/cache.js";
 
-test("feeKey", () => assert.equal(feeKey("B0X"), "fee:B0X"));
+test("feeKey por moneda", () => assert.equal(feeKey("B0X", "ARS"), "fee:B0X:ARS"));
 test("isFresh", () => {
   assert.equal(isFresh({ at: 0 }, FEE_TTL_MS - 1, FEE_TTL_MS), true);
   assert.equal(isFresh({ at: 0 }, FEE_TTL_MS + 1, FEE_TTL_MS), false);

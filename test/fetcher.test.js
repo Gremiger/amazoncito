@@ -13,10 +13,20 @@ test("resultFromDoc", () => {
 
 import { shouldCache } from "../content/fetcher.js";
 
-test("no se cachea un resultado en moneda distinta de USD", () => {
-  assert.equal(shouldCache({ status: "ok", fee: { currency: "ARS" } }), false);
+test("se cachea USD, ARS y no-envía; no otras monedas ni errores", () => {
+  assert.equal(shouldCache({ status: "ok", fee: { currency: "ARS" } }), true);
+  assert.equal(shouldCache({ status: "ok", fee: { currency: "EUR" } }), false);
   assert.equal(shouldCache({ status: "ok", fee: { currency: "USD" } }), true);
   assert.equal(shouldCache({ status: "noship" }), true);
   assert.equal(shouldCache({ status: "unknown" }), false);
   assert.equal(shouldCache({ status: "captcha" }), false);
+});
+
+import { classifyResponse } from "../content/fetcher.js";
+
+test("classifyResponse: 503 y 429 son límite de pedidos", () => {
+  assert.equal(classifyResponse(503), "throttled");
+  assert.equal(classifyResponse(429), "throttled");
+  assert.equal(classifyResponse(200), "ok");
+  assert.equal(classifyResponse(404), "ok");
 });

@@ -49,3 +49,9 @@ test("patrocinados: link /sspa/click sin /dp/ literal", () => {
   assert.ok(card, "la tarjeta patrocinada no se detectó");
   assert.equal(parseListingCard(card).asin, "B0CSYG2CP3");
 });
+test("tarjeta elegible con montos en ARS", async () => {
+  const { docFrom } = await import("./helpers.js");
+  const d = docFrom(`<div data-asin="B0X"><span class="a-price"><span class="a-offscreen">ARS 15,149.83</span></span>
+    <a href="/dp/B0X">x</a><div data-cy="delivery-recipe">FREE delivery Wed, Oct 21 to Argentina on ARS 150,133.50 of eligible items</div></div>`);
+  assert.equal(parseListingCard(findCards(d)[0]).freeEligible, true);
+});

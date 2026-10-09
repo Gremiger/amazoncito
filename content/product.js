@@ -1,6 +1,7 @@
 import { resultFromDoc, putFee } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
-import { getSettings, setSetting, getRates } from "./store.js";
+import { getSettings, setSetting, getRates, withAmazonRate } from "./store.js";
+import { pageCurrency, normalizeFee } from "../lib/currency.js";
 import { freeShippingGap } from "../lib/calc.js";
 import { fmtUsd } from "../lib/format.js";
 
@@ -28,12 +29,14 @@ export default async function runProduct() {
     box?.remove();
     box = null;
     if (result.status !== "ok") return; // Amazon ya muestra "no envía"; nada que agregar
-    if (asin) await putFee(asin, result);
-    box = renderBadge(document, { ...result, asin }, ctx);
-    if (result.eligible && result.fee.price < 99) {
+    if (asin) await putFee(asin, result, pageCurrency(document.cookie));
+    const c = { ...ctx, rates: await withAmazonRate(ctx.rates) };
+    box = renderBadge(document, { ...result, asin }, c);
+    const usdPrice = normalizeFee(result.fee, c.rates).usd?.price;
+    if (result.eligible && usdPrice != null && usdPrice < 99) {
       const p = document.createElement("div");
       p.className = "amzar-muted";
-      p.textContent = `Con este ítem te faltan ${fmtUsd(freeShippingGap(result.fee.price))} en ítems elegibles para envío gratis.`;
+      p.textContent = `Con este ítem te faltan ${result.fee.currency === "ARS" ? "≈ " : ""}${fmtUsd(freeShippingGap(usdPrice))} en ítems elegibles para envío gratis.`;
       box.append(p);
     }
     const anchor = ANCHORS.map((s) => document.querySelector(s)).find(Boolean);

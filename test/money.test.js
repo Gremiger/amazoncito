@@ -19,3 +19,13 @@ test("sin número → null", () => {
   assert.equal(parseMoney("FREE"), null);
   assert.equal(parseMoney(undefined), null);
 });
+
+test("otras monedas no se confunden con USD", () => {
+  assert.equal(parseMoney("EUR 12.00").currency, "EUR");
+  assert.equal(parseMoney("€12.00").currency, "EUR");
+  assert.equal(parseMoney("R$ 50.00").currency, "BRL");
+  assert.equal(parseMoney("£9.99").currency, "GBP");
+  assert.equal(parseMoney("CA$10.00").currency, "CAD");
+  assert.equal(parseMoney("$10.00").currency, "USD");
+  assert.equal(parseMoney("ARS 1,000.00").currency, "ARS");
+});

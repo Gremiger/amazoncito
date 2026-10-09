@@ -53,3 +53,6 @@ test("captcha", () => {
   assert.equal(isCaptcha(docFrom(`<form action="/errors/validateCaptcha"></form>`)), true);
   assert.equal(isCaptcha(loadFixture("product-usd-paid-shipping.html")), false);
 });
+test("elegibilidad con montos en ARS", () => {
+  assert.equal(parseFreeShippingEligible(docFrom(`<div id="mir-layout-DELIVERY_BLOCK">FREE delivery Wednesday, October 21 to Argentina on eligible orders over ARS 150,133.50</div>`)), true);
+});

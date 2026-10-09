@@ -10,5 +10,9 @@ export const getRates = () => Promise.race([
   chrome.runtime.sendMessage({ type: "rates" }).catch(() => null),
   new Promise((r) => setTimeout(() => r(null), RATES_WAIT_MS)),
 ]);
+export async function withAmazonRate(rates) {
+  const amazon = await localGet("amazonRate");
+  return amazon ? { ...(rates ?? {}), amazon } : rates;
+}
 export async function localGet(key) { return (await chrome.storage.local.get(key))[key]; }
 export const localSet = (key, value) => chrome.storage.local.set({ [key]: value });
