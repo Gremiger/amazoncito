@@ -10,3 +10,13 @@ test("resultFromDoc", () => {
   assert.equal(resultFromDoc(docFrom(`<form action="/errors/validateCaptcha"></form>`)).status, "captcha");
   assert.equal(resultFromDoc(docFrom(`<p>nada</p>`)).status, "unknown");
 });
+
+import { shouldCache } from "../content/fetcher.js";
+
+test("no se cachea un resultado en moneda distinta de USD", () => {
+  assert.equal(shouldCache({ status: "ok", fee: { currency: "ARS" } }), false);
+  assert.equal(shouldCache({ status: "ok", fee: { currency: "USD" } }), true);
+  assert.equal(shouldCache({ status: "noship" }), true);
+  assert.equal(shouldCache({ status: "unknown" }), false);
+  assert.equal(shouldCache({ status: "captcha" }), false);
+});

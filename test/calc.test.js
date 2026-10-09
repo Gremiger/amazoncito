@@ -31,3 +31,9 @@ test("settings: defaults y merge", () => {
   assert.equal(mergeSettings({ percepcionIibb: 2, junk: 1 }).percepcionIibb, 2);
   assert.equal("junk" in mergeSettings({ junk: 1 }), false);
 });
+
+test("settings: concurrencia se acota a 1–6", () => {
+  assert.equal(mergeSettings({ concurrencia: 0 }).concurrencia, 1);
+  assert.equal(mergeSettings({ concurrencia: "" }).concurrencia, 3);
+  assert.equal(mergeSettings({ concurrencia: 50 }).concurrencia, 6);
+});

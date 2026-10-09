@@ -34,3 +34,13 @@ test("error se propaga y libera la key", async () => {
   await assert.rejects(q.run("k", async () => { throw new Error("boom"); }), /boom/);
   assert.equal(await q.run("k", async () => 2), 2);
 });
+
+test("pausa con motivo rechaza los trabajos en espera", async () => {
+  const q = createQueue({ concurrency: 1 });
+  const slow = q.run("a", () => new Promise((r) => setTimeout(() => r(1), 20)));
+  const waiting = q.run("b", async () => 2);
+  const rejected = assert.rejects(waiting, /captcha/);
+  q.pause(1000, new Error("captcha"));
+  assert.equal(await slow, 1);
+  await rejected;
+});

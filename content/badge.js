@@ -46,7 +46,7 @@ export function renderBadge(doc, state, ctx) {
   switch (state.status) {
     case "loading": root.append(el(doc, "div", "amzar-muted", "Calculando total a AR…")); return root;
     case "noship": root.append(el(doc, "div", "amzar-warn", "No envía a Argentina")); return root;
-    case "captcha": root.append(el(doc, "div", "amzar-warn", "Amazon pidió captcha — pausado 5 min")); return root;
+    case "captcha": root.append(el(doc, "div", "amzar-warn", "Amazon pidió captcha — pausado 5 min (si se repite: Opciones → Listados → Solo al pasar el mouse)")); return root;
     case "unknown":
     case "error": {
       const a = el(doc, "a", "amzar-muted", "Ver total");

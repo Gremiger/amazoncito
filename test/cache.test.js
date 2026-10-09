@@ -20,3 +20,11 @@ test("chooseRates: fetch falla → cache vieja marcada stale", () => {
   assert.deepEqual(chooseRates({ venta: 1, fecha: "a", at: 0 }, null, 0), { venta: 1, fecha: "a", stale: true });
 });
 test("chooseRates: nada → null", () => assert.equal(chooseRates(undefined, null, 0), null));
+
+import { shouldFetchRates, RATES_RETRY_MS } from "../lib/cache.js";
+
+test("shouldFetchRates: espera tras un fallo reciente", () => {
+  assert.equal(shouldFetchRates(undefined, 0), true);
+  assert.equal(shouldFetchRates(1000, 1000 + RATES_RETRY_MS - 1), false);
+  assert.equal(shouldFetchRates(1000, 1000 + RATES_RETRY_MS + 1), true);
+});

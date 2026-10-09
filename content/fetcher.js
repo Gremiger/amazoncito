@@ -25,18 +25,29 @@ async function fetchDoc(asin) {
   throw lastErr;
 }
 
+// Solo se cachea lo estable: un total en USD o "no envía". Un resultado en otra moneda
+// se descarta para que el cambio a USD se vea enseguida.
+export const shouldCache = (result) =>
+  (result.status === "ok" && result.fee.currency === "USD") || result.status === "noship";
+
 export async function putFee(asin, result) {
-  if (result.status === "ok" || result.status === "noship") await localSet(feeKey(asin), { at: Date.now(), result });
+  if (shouldCache(result)) await localSet(feeKey(asin), { at: Date.now(), result });
 }
+
+class CaptchaError extends Error { status = "captcha"; }
 
 export async function getFee(asin, { concurrencia }) {
   const cached = await localGet(feeKey(asin));
   if (isFresh(cached, Date.now(), FEE_TTL_MS)) return cached.result;
+  // La pausa se comparte entre pestañas: otra página de resultados no debe reintentar enseguida.
+  if ((await localGet("captchaUntil") ?? 0) > Date.now()) return { status: "captcha" };
   queue ??= createQueue({ concurrency: concurrencia });
-  if (queue.pausedUntil > Date.now()) return { status: "captcha" };
   return queue.run(asin, async () => {
     const result = resultFromDoc(await fetchDoc(asin));
-    if (result.status === "captcha") queue.pause(CAPTCHA_PAUSE_MS);
+    if (result.status === "captcha") {
+      queue.pause(CAPTCHA_PAUSE_MS, new CaptchaError("captcha"));
+      await localSet("captchaUntil", Date.now() + CAPTCHA_PAUSE_MS);
+    }
     await putFee(asin, result);
     return result;
   });

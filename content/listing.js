@@ -5,7 +5,7 @@ import { getSettings, setSetting, getRates } from "./store.js";
 
 export default async function runListing() {
   const settings = await getSettings();
-  const rates = await getRates().catch(() => null);
+  const rates = await getRates();
   const ctx = {
     settings, rates, variant: "card",
     onToggleArs: async (v) => { await setSetting("mostrarArs", v); location.reload(); },
@@ -24,7 +24,7 @@ export default async function runListing() {
     place(card, renderBadge(document, { status: "loading" }, ctx));
     let result;
     try { result = await getFee(info.asin, settings); }
-    catch { result = { status: "error" }; }
+    catch (e) { result = { status: e?.status ?? "error" }; }
     const eligible = result.eligible || info.freeEligible;
     place(card, renderBadge(document, { ...result, eligible, asin: info.asin }, ctx));
   };
