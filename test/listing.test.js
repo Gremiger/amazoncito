@@ -43,3 +43,9 @@ test("priceAnchor: elemento de precio dentro de la tarjeta", () => {
   assert.ok(anchor && card.contains(anchor) && anchor !== card);
   assert.match(anchor.textContent, /\$\d/);
 });
+
+test("patrocinados: link /sspa/click sin /dp/ literal", () => {
+  const card = findCards(doc).find((c) => c.getAttribute("data-asin") === "B0CSYG2CP3");
+  assert.ok(card, "la tarjeta patrocinada no se detectó");
+  assert.equal(parseListingCard(card).asin, "B0CSYG2CP3");
+});
