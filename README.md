@@ -82,6 +82,10 @@ el checkout y tu banco en el resumen.
 
 Amazoncito no está afiliado a Amazon.com, Inc.
 
+## Licencia
+
+[MIT](LICENSE): podés usarla, modificarla y compartirla libremente, manteniendo el aviso de autoría.
+
 ## Desarrollo
 
 ```sh
