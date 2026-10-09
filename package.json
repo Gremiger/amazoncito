@@ -1,5 +1,5 @@
 {
-  "name": "amazon-ar",
+  "name": "amazoncito",
   "private": true,
   "type": "module",
   "scripts": { "test": "node --test" },

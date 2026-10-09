@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Amazon → Argentina: costo total",
+  "name": "Amazoncito",
   "version": "0.1.0",
   "description": "Muestra precio + envío + importación y su equivalente en pesos con percepciones.",
   "permissions": ["storage"],

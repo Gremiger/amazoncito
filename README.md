@@ -1,4 +1,4 @@
-# Amazon → Argentina: costo total
+# Amazoncito
 
 Extensión para Arc/Chrome. En amazon.com con entrega a Argentina muestra en listados,
 ficha y carrito el total (precio + envío + importación estimada) en USD, y debajo lo
