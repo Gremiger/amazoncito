@@ -1,0 +1,13 @@
+.amzar { font: 13px/1.35 "Amazon Ember", Arial, sans-serif; margin: 4px 0; color: #0f1111; }
+.amzar-total { font-weight: 700; font-size: 14px; }
+.amzar-ars { color: #565959; font-size: 12px; cursor: help; }
+.amzar-toggle { color: #007185; font-size: 11px; cursor: pointer; margin-left: 6px; background: none; border: 0; padding: 0; }
+.amzar-free { display: inline-block; background: #067d62; color: #fff; font-weight: 700; font-size: 12px; border-radius: 4px; padding: 1px 6px; margin: 2px 0; }
+.amzar-muted { color: #565959; font-size: 12px; }
+.amzar-warn { color: #b12704; font-size: 12px; }
+.amzar-box { border: 1px solid #d5d9d9; border-radius: 8px; padding: 10px 12px; margin: 8px 0; background: #f7fafa; }
+.amzar-box table { border-collapse: collapse; width: 100%; }
+.amzar-box td { padding: 1px 0; }
+.amzar-box td:last-child { text-align: right; }
+.amzar-progress { height: 8px; background: #e3e6e6; border-radius: 4px; overflow: hidden; margin: 4px 0; }
+.amzar-progress > div { height: 100%; background: #067d62; }

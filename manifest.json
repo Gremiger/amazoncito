@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Amazon → Argentina: costo total",
+  "version": "0.1.0",
+  "description": "Muestra precio + envío + importación y su equivalente en pesos con percepciones.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.amazon.com/*", "https://dolarapi.com/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "options_page": "options.html",
+  "content_scripts": [{
+    "matches": ["https://www.amazon.com/*"],
+    "js": ["content/boot.js"],
+    "css": ["content/styles.css"],
+    "run_at": "document_idle"
+  }],
+  "web_accessible_resources": [{
+    "resources": ["lib/*.js", "content/*.js"],
+    "matches": ["https://www.amazon.com/*"]
+  }]
+}
