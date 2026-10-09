@@ -54,7 +54,7 @@ JS plano, sin build. Tests con `node --test`.
 | `content/common.js` | Detecta Argentina (`#glow-ingress-line2`), lee configuración, helpers de badge/estilos. |
 | `content/listing.js` | `IntersectionObserver` sobre tarjetas `[data-component-type="s-search-result"]` y equivalentes de otras grillas; pide datos y pinta badge. `MutationObserver` para resultados cargados dinámicamente. |
 | `content/product.js` | Ficha: parsea el popover del DOM ya presente (sin fetch) y pinta un recuadro bajo el precio. Guarda el resultado en la caché. |
-| `content/cart.js` | Carrito: subtotal, barra de progreso a USD 99, total estimado sumando la caché por ASIN × cantidad; ítems sin dato en caché se piden al background. |
+| `content/cart.js` | Carrito: subtotal, barra de progreso a USD 99, total estimado sumando la caché por ASIN × cantidad; ítems sin dato en caché se piden vía `fetcher.js`. |
 | `content/styles.css` | Estilos de badges/recuadros (respetan fondo claro de Amazon). |
 | `options.html` + `options.js` | Configuración. |
 
