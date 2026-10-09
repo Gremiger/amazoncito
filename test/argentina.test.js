@@ -16,3 +16,7 @@ test("dirección de EE. UU. sin mención a Argentina", () => {
   const doc = docFrom(`<span id="glow-ingress-line2">New York 10001</span><div>FREE delivery Tomorrow</div>`);
   assert.equal(detectArgentina(doc), false);
 });
+test("texto pegado al botón siguiente ('to ArgentinaAdd to cart')", () => {
+  const doc = docFrom(`<span id="glow-ingress-line2">Río Cuarto 5800</span><div>Delivery Wed, Oct 21 to Argentina<button>Add to cart</button></div>`);
+  assert.equal(detectArgentina(doc), true);
+});

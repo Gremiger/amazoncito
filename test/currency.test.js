@@ -42,3 +42,18 @@ test("normalizeFee ARS sin ninguna cotización → usd null", () => {
 test("normalizeFee otra moneda → usd null", () => {
   assert.equal(normalizeFee({ ...arsFee, currency: "EUR" }, { venta: 1540 }).usd, null);
 });
+
+import { toPageCurrency } from "../lib/currency.js";
+
+const usdFee = { price: 289.99, shipping: 26.48, importCharges: 66.46, total: 382.93, currency: "USD" };
+
+test("toPageCurrency: USD cacheado se muestra en ARS con la cotización de Amazon", () => {
+  const f = toPageCurrency(usdFee, "ARS", { amazon: { venta: 1516.5 } });
+  assert.equal(f.currency, "ARS");
+  assert.ok(Math.abs(f.total - 580713.35) < 0.02, String(f.total));
+  assert.ok(Math.abs(f.price - 439769.84) < 0.02, String(f.price));
+});
+test("toPageCurrency: sin cotización de Amazon o misma moneda, queda igual", () => {
+  assert.equal(toPageCurrency(usdFee, "ARS", { venta: 1540 }), usdFee);
+  assert.equal(toPageCurrency(usdFee, "USD", { amazon: { venta: 1516.5 } }), usdFee);
+});

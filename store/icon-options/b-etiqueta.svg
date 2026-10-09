@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#0F2747"/>
+  <g transform="rotate(-20 64 64)">
+    <clipPath id="tag"><path d="M30 34 H86 L108 64 L86 94 H30 Q22 94 22 86 V42 Q22 34 30 34 Z"/></clipPath>
+    <g clip-path="url(#tag)">
+      <rect x="20" y="30" width="92" height="22" fill="#74ACDF"/>
+      <rect x="20" y="52" width="92" height="24" fill="#FFFFFF"/>
+      <rect x="20" y="76" width="92" height="22" fill="#74ACDF"/>
+    </g>
+    <circle cx="90" cy="64" r="6" fill="#0F2747"/>
+    <text x="52" y="74" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="30" fill="#0F2747">$</text>
+  </g>
+</svg>

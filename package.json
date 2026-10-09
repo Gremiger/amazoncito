@@ -2,6 +2,11 @@
   "name": "amazoncito",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test" },
-  "devDependencies": { "linkedom": "^0.18.0" }
+  "scripts": {
+    "test": "node --test",
+    "pack": "sh scripts/pack.sh"
+  },
+  "devDependencies": {
+    "linkedom": "^0.18.0"
+  }
 }

@@ -3,7 +3,7 @@ import { slotsFor, sortKey, placeInOrder } from "../lib/sort.js";
 import { getFee, learnFromPrices } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
 import { getSettings, setSetting, getRates, withAmazonRate } from "./store.js";
-import { pageCurrency } from "../lib/currency.js";
+import { pageCurrency, toPageCurrency } from "../lib/currency.js";
 
 // Contenedor visible de la tarjeta en grillas que la envuelven (más vendidos, ofertas).
 const cellOf = (card) => card.closest('#gridItemRoot, [class*="GridItem-module__container"]') ?? card;
@@ -27,7 +27,8 @@ export default async function runListing() {
   const render = async (card) => {
     const state = loaded.get(card);
     const c = { ...ctx, rates: await withAmazonRate(ctx.rates) };
-    place(card, renderBadge(document, state, c));
+    const shown = state.fee ? { ...state, fee: toPageCurrency(state.fee, currency, c.rates) } : state;
+    place(card, renderBadge(document, shown, c));
     const cell = cellOf(card);
     const noship = state.status === "noship";
     cell.classList.toggle("amzar-dim", noship && settings.noEnvia === "atenuar");
