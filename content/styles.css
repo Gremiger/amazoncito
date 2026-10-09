@@ -16,3 +16,5 @@
 .amzar-sort { margin: 8px 0; padding: 6px 12px; border: 1px solid #d5d9d9; border-radius: 8px; background: #fff; font: 600 13px "Amazon Ember", Arial, sans-serif; cursor: pointer; }
 .amzar-sort:hover { background: #f7fafa; }
 .amzar-sort:disabled { cursor: progress; color: #565959; }
+.amzar-update { background: #eaf4fc; border: 1px solid #74acdf; border-radius: 8px; padding: 6px 10px; margin: 8px 0; font-size: 13px; }
+.amzar-update a { color: #007185; }

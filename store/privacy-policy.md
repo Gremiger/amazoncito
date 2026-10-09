@@ -27,6 +27,8 @@ Podés borrar todo desinstalando la extensión.
   importación a Argentina. El pedido lo hace tu navegador, igual que si abrieras el producto, con tu
   sesión de Amazon. La extensión no lee ni guarda tu nombre, dirección completa, pedidos ni datos de pago.
 - **dolarapi.com:** para obtener la cotización del dólar oficial y MEP. No se envía ningún dato tuyo.
+- **api.github.com:** una vez por día, para saber si hay una versión nueva de Amazoncito. No se envía
+  ningún dato tuyo.
 
 ## Afiliación
 

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Amazoncito",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Muestra precio + envío + importación y su equivalente en pesos con percepciones.",
   "icons": {
     "16": "icons/icon16.png",
@@ -14,7 +14,8 @@
   ],
   "host_permissions": [
     "https://www.amazon.com/*",
-    "https://dolarapi.com/*"
+    "https://dolarapi.com/*",
+    "https://api.github.com/*"
   ],
   "background": {
     "service_worker": "background.js",

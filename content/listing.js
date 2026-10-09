@@ -2,7 +2,8 @@ import { findCards, parseListingCard, priceAnchor } from "../lib/parse.js";
 import { slotsFor, sortKey, placeInOrder } from "../lib/sort.js";
 import { getFee, learnFromPrices } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
-import { getSettings, setSetting, getRates, withAmazonRate } from "./store.js";
+import { getSettings, setSetting, getRates, withAmazonRate, getUpdate, dismissUpdate } from "./store.js";
+import { renderUpdateBanner } from "./update-banner.js";
 import { pageCurrency, toPageCurrency } from "../lib/currency.js";
 
 // Contenedor visible de la tarjeta en grillas que la envuelven (más vendidos, ofertas).
@@ -56,6 +57,8 @@ export default async function runListing() {
     for (const card of loaded.keys()) if (card.isConnected) render(card);
   });
 
+  const update = await getUpdate().catch(() => null);
+
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(e.target); }
   }, { rootMargin: "200px" });
@@ -101,6 +104,7 @@ export default async function runListing() {
     if (cards.length > 1 && !sortButton.isConnected) {
       const first = slotsFor(cards)[0]?.slot.parentElement;
       first?.before(sortButton);
+      if (update && !document.querySelector(".amzar-update")) sortButton.before(renderUpdateBanner(document, update, dismissUpdate));
       original = null;
       sortButton.textContent = "Ordenar por total a AR";
     }

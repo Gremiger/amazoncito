@@ -1,3 +1,4 @@
+import { pickLatest, LATEST_API, UPDATE_TTL_MS } from "./lib/update.js";
 import { pickOficial, chooseRates, combineRates, isFresh, shouldFetchRates, RATES_TTL_MS, FEE_TTL_MS } from "./lib/cache.js";
 
 async function fetchRate(casa) {
@@ -34,8 +35,23 @@ async function pruneFees() {
   if (stale.length) await chrome.storage.local.remove(stale);
 }
 
+// Último release en GitHub, consultado como mucho una vez por día. Si falla, no hay aviso.
+async function getLatestRelease() {
+  const { latestRelease } = await chrome.storage.local.get("latestRelease");
+  const now = Date.now();
+  if (isFresh(latestRelease, now, UPDATE_TTL_MS)) return latestRelease.latest;
+  let latest = latestRelease?.latest ?? null;
+  try {
+    const res = await fetch(LATEST_API, { signal: AbortSignal.timeout(5_000), headers: { Accept: "application/vnd.github+json" } });
+    if (res.ok) latest = pickLatest(await res.json());
+  } catch { /* sin aviso */ }
+  await chrome.storage.local.set({ latestRelease: { latest, at: now } });
+  return latest;
+}
+
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type === "rates") { getRates().then(sendResponse); return true; }
+  if (msg?.type === "latestRelease") { getLatestRelease().then(sendResponse); return true; }
 });
 chrome.runtime.onStartup.addListener(pruneFees);
 chrome.runtime.onInstalled.addListener(pruneFees);

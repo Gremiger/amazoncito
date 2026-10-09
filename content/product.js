@@ -1,6 +1,7 @@
 import { resultFromDoc, putFee } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
-import { getSettings, setSetting, getRates, withAmazonRate } from "./store.js";
+import { getSettings, setSetting, getRates, withAmazonRate, getUpdate, dismissUpdate } from "./store.js";
+import { renderUpdateBanner } from "./update-banner.js";
 import { pageCurrency, normalizeFee } from "../lib/currency.js";
 import { freeShippingGap } from "../lib/calc.js";
 import { fmtUsd } from "../lib/format.js";
@@ -44,6 +45,8 @@ export default async function runProduct() {
 
   ctx.rates = await getRates((late) => { ctx.rates = late; lastKey = null; render(); });
   await render();
+  const update = await getUpdate().catch(() => null);
+  if (update) document.querySelector("#centerCol, #ppd")?.prepend(renderUpdateBanner(document, update, dismissUpdate));
   // Al elegir otra variante Amazon reemplaza precio y popover por AJAX, sin recargar.
   let t;
   new MutationObserver((muts) => {

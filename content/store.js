@@ -1,5 +1,6 @@
 import { mergeSettings } from "../lib/settings.js";
 import { raceWithLate } from "../lib/late.js";
+import { updateToShow } from "../lib/update.js";
 
 export async function getSettings() {
   return mergeSettings(await chrome.storage.sync.get(null));
@@ -16,3 +17,10 @@ export async function withAmazonRate(rates) {
 }
 export async function localGet(key) { return (await chrome.storage.local.get(key))[key]; }
 export const localSet = (key, value) => chrome.storage.local.set({ [key]: value });
+
+// Versión nueva publicada que la persona todavía no ocultó, o null.
+export async function getUpdate() {
+  const latest = await chrome.runtime.sendMessage({ type: "latestRelease" }).catch(() => null);
+  return updateToShow(latest, chrome.runtime.getManifest().version, await localGet("updateDismissed"));
+}
+export const dismissUpdate = (version) => localSet("updateDismissed", version);
