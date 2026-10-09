@@ -2,6 +2,7 @@ import { parseFeeDetails, isNoShip, isCaptcha, parseFreeShippingEligible } from 
 import { createQueue } from "../lib/queue.js";
 import { feeKey, isFresh, FEE_TTL_MS } from "../lib/cache.js";
 import { learnAmazonRate } from "../lib/currency.js";
+import { enoughHtml } from "../lib/stream.js";
 import { localGet, localSet } from "./store.js";
 
 const CAPTCHA_PAUSE_MS = 5 * 60 * 1000;
@@ -19,13 +20,30 @@ export function resultFromDoc(doc) {
   return { status: "unknown" };
 }
 
+// Lee la respuesta hasta tener lo necesario y corta: ~250 KB en vez de ~2 MB por producto.
+async function readUntilEnough(res) {
+  if (!res.body) return res.text();
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) return text + decoder.decode();
+    text += decoder.decode(value, { stream: true });
+    if (enoughHtml(text)) {
+      reader.cancel().catch(() => {});
+      return text;
+    }
+  }
+}
+
 async function fetchDoc(asin) {
   let lastErr;
   for (let i = 0; i < 2; i++) {
     try {
       const res = await fetch(`/dp/${asin}`, { credentials: "include", signal: AbortSignal.timeout(15_000) });
       if (classifyResponse(res.status) === "throttled") return null;
-      return new DOMParser().parseFromString(await res.text(), "text/html");
+      return new DOMParser().parseFromString(await readUntilEnough(res), "text/html");
     } catch (e) { lastErr = e; }
   }
   throw lastErr;
