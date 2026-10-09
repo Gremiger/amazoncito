@@ -11,3 +11,8 @@
 .amzar-box td:last-child { text-align: right; }
 .amzar-progress { height: 8px; background: #e3e6e6; border-radius: 4px; overflow: hidden; margin: 4px 0; }
 .amzar-progress > div { height: 100%; background: #067d62; }
+.amzar-dim { opacity: .4; }
+.amzar-hidden { display: none !important; }
+.amzar-sort { margin: 8px 0; padding: 6px 12px; border: 1px solid #d5d9d9; border-radius: 8px; background: #fff; font: 600 13px "Amazon Ember", Arial, sans-serif; cursor: pointer; }
+.amzar-sort:hover { background: #f7fafa; }
+.amzar-sort:disabled { cursor: progress; color: #565959; }

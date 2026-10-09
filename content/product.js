@@ -12,9 +12,8 @@ const currentAsin = () =>
 
 export default async function runProduct() {
   const settings = await getSettings();
-  const rates = await getRates();
   const ctx = {
-    settings, rates, variant: "box",
+    settings, rates: null, variant: "box",
     onToggleArs: async (v) => { await setSetting("mostrarArs", v); location.reload(); },
   };
   let box = null;
@@ -43,6 +42,7 @@ export default async function runProduct() {
     (anchor ?? document.querySelector("#centerCol") ?? document.body).after(box);
   };
 
+  ctx.rates = await getRates((late) => { ctx.rates = late; lastKey = null; render(); });
   await render();
   // Al elegir otra variante Amazon reemplaza precio y popover por AJAX, sin recargar.
   let t;

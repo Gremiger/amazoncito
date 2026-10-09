@@ -10,7 +10,7 @@ const ANCHORS = ["#sc-buy-box", "#gutterCartViewForm", "#sc-active-cart"];
 
 export default async function runCart() {
   const settings = await getSettings();
-  const rates = await getRates();
+  let rates = null;
   const currency = pageCurrency(document.cookie);
   const box = document.createElement("div");
   box.className = "amzar amzar-box";
@@ -73,6 +73,7 @@ export default async function runCart() {
   };
 
   box.textContent = "Calculando total a AR…";
+  rates = await getRates((late) => { rates = late; render(); });
   await render();
   // El carrito se actualiza por AJAX al cambiar cantidades.
   const cart = document.querySelector("#sc-active-cart");

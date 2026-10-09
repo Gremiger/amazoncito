@@ -37,3 +37,9 @@ test("settings: concurrencia se acota a 1–6", () => {
   assert.equal(mergeSettings({ concurrencia: "" }).concurrencia, 3);
   assert.equal(mergeSettings({ concurrencia: 50 }).concurrencia, 6);
 });
+
+test("settings: noEnvia por defecto atenuar y solo valores válidos", () => {
+  assert.equal(DEFAULTS.noEnvia, "atenuar");
+  assert.equal(mergeSettings({ noEnvia: "ocultar" }).noEnvia, "ocultar");
+  assert.equal(mergeSettings({ noEnvia: "cualquiera" }).noEnvia, "atenuar");
+});
