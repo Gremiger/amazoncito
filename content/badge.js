@@ -10,6 +10,8 @@ function el(doc, tag, cls, txt) {
 
 function arsLine(doc, fee, { settings, rates, onToggleArs }) {
   if (!settings.mostrarArs || !rates) return null;
+  const wrap = el(doc, "div");
+  if (rates.mep) wrap.append(el(doc, "div", "amzar-ars", `Con dólares propios (MEP): ${fmtArs(fee.total * rates.mep.venta)}`));
   const b = arsBreakdown(fee.total, rates.venta, settings);
   const line = el(doc, "div", "amzar-ars", `En pesos (${settings.perfil}): ${fmtArs(b.total)}`);
   line.title = [
@@ -27,7 +29,8 @@ function arsLine(doc, fee, { settings, rates, onToggleArs }) {
   btn.type = "button";
   btn.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); onToggleArs?.(false); });
   line.append(btn);
-  return line;
+  wrap.append(line);
+  return wrap;
 }
 
 function breakdownTable(doc, fee) {

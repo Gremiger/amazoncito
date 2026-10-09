@@ -54,6 +54,7 @@ export default async function runCart() {
       line("amzar-total", `Total estimado a AR: ${fmtUsd(s.total)}`),
     );
     if (settings.mostrarArs && rates) {
+      if (rates.mep) box.append(line("amzar-ars", `Con dólares propios (MEP): ${fmtArs(s.total * rates.mep.venta)}`));
       box.append(line("amzar-ars", `En pesos (${settings.perfil}): ${fmtArs(arsBreakdown(s.total, rates.venta, settings).total)}`));
     }
     box.append(line("amzar-muted", "Estimado: Amazon recalcula envío e importación en el checkout." +

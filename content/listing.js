@@ -1,4 +1,4 @@
-import { findCards, parseListingCard } from "../lib/parse.js";
+import { findCards, parseListingCard, priceAnchor } from "../lib/parse.js";
 import { getFee } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
 import { getSettings, setSetting, getRates } from "./store.js";
@@ -11,12 +11,10 @@ export default async function runListing() {
     onToggleArs: async (v) => { await setSetting("mostrarArs", v); location.reload(); },
   };
 
-  const anchorFor = (card) =>
-    card.querySelector('[data-cy="price-recipe"]') ?? card.querySelector(".a-price")?.parentElement ?? card;
-
   const place = (card, node) => {
     card.querySelector("[data-amzar-badge]")?.remove();
-    anchorFor(card).after(node);
+    const anchor = priceAnchor(card);
+    if (anchor) anchor.after(node); else card.append(node);
   };
 
   const load = async (card) => {

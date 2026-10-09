@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadFixture } from "./helpers.js";
-import { parseListingCard, findCards } from "../lib/parse.js";
+import { parseListingCard, findCards, priceAnchor } from "../lib/parse.js";
 
 const doc = loadFixture("search-usd.html");
 
@@ -21,4 +21,25 @@ test("tarjeta con envío pago", () => {
   const r = parseListingCard(card);
   assert.equal(r.freeEligible, false);
   assert.equal(r.price.amount, 8.99);
+});
+
+test("más vendidos: tarjetas con precio p13n-sc-price", () => {
+  const cards = findCards(loadFixture("bestsellers-usd.html"));
+  assert.ok(cards.length >= 25, `solo ${cards.length}`);
+  const r = parseListingCard(cards.find((c) => c.getAttribute("data-asin") === "B0GVTPKJVT"));
+  assert.deepEqual(r.price, { amount: 154.99, currency: "USD" });
+});
+
+test("ofertas: tarjetas de producto con precio de oferta", () => {
+  const cards = findCards(loadFixture("deals-usd.html"));
+  assert.ok(cards.length >= 8, `solo ${cards.length}`);
+  const r = parseListingCard(cards.find((c) => c.getAttribute("data-asin") === "B0GPFHCYK7"));
+  assert.deepEqual(r.price, { amount: 99.99, currency: "USD" });
+});
+
+test("priceAnchor: elemento de precio dentro de la tarjeta", () => {
+  const card = findCards(loadFixture("bestsellers-usd.html"))[0];
+  const anchor = priceAnchor(card);
+  assert.ok(anchor && card.contains(anchor) && anchor !== card);
+  assert.match(anchor.textContent, /\$\d/);
 });

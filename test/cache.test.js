@@ -28,3 +28,12 @@ test("shouldFetchRates: espera tras un fallo reciente", () => {
   assert.equal(shouldFetchRates(1000, 1000 + RATES_RETRY_MS - 1), false);
   assert.equal(shouldFetchRates(1000, 1000 + RATES_RETRY_MS + 1), true);
 });
+
+import { combineRates } from "../lib/cache.js";
+
+test("combineRates agrega MEP si está", () => {
+  assert.deepEqual(combineRates({ venta: 1540, fecha: "a", stale: false }, { venta: 1540.5, fecha: "b" }),
+    { venta: 1540, fecha: "a", stale: false, mep: { venta: 1540.5, fecha: "b" } });
+  assert.deepEqual(combineRates({ venta: 1540, fecha: "a", stale: true }, null), { venta: 1540, fecha: "a", stale: true });
+  assert.equal(combineRates(null, { venta: 1, fecha: "b" }), null);
+});

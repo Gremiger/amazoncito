@@ -42,3 +42,15 @@ test("cotización vieja indica fecha", () => {
   const t = renderBadge(doc, { status: "ok", fee }, { ...ctx, rates: { venta: 1540, fecha: "2026-10-08T12:00:00Z", stale: true } }).textContent;
   assert.match(t, /cotización del 08\/10/);
 });
+
+test("MEP: línea con dólares propios antes de pesos con percepciones", () => {
+  const rates = { venta: 1540, fecha: "2026-10-09", stale: false, mep: { venta: 1540.5, fecha: "2026-10-09" } };
+  const t = renderBadge(doc, { status: "ok", fee }, { ...ctx, rates }).textContent;
+  assert.match(t, /Con dólares propios \(MEP\): ARS 774\.872/);
+  assert.ok(t.indexOf("MEP") < t.indexOf("En pesos (Córdoba)"));
+});
+test("sin MEP solo muestra pesos con percepciones", () => {
+  const t = renderBadge(doc, { status: "ok", fee }, ctx).textContent;
+  assert.doesNotMatch(t, /MEP/);
+  assert.match(t, /En pesos \(Córdoba\)/);
+});

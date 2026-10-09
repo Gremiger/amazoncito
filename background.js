@@ -1,18 +1,30 @@
-import { pickOficial, chooseRates, isFresh, shouldFetchRates, RATES_TTL_MS, FEE_TTL_MS } from "./lib/cache.js";
+import { pickOficial, chooseRates, combineRates, isFresh, shouldFetchRates, RATES_TTL_MS, FEE_TTL_MS } from "./lib/cache.js";
+
+async function fetchRate(casa) {
+  try {
+    const res = await fetch(`https://dolarapi.com/v1/dolares/${casa}`, { signal: AbortSignal.timeout(5_000) });
+    if (res.ok) return pickOficial(await res.json());
+  } catch { /* se usa la cache */ }
+  return null;
+}
 
 async function getRates() {
-  const { rates, ratesFailAt } = await chrome.storage.local.get(["rates", "ratesFailAt"]);
+  const { rates, mep, ratesFailAt } = await chrome.storage.local.get(["rates", "mep", "ratesFailAt"]);
   const now = Date.now();
-  if (isFresh(rates, now, RATES_TTL_MS)) return { venta: rates.venta, fecha: rates.fecha, stale: false };
-  if (!shouldFetchRates(ratesFailAt, now)) return chooseRates(rates, null, now);
-  let fetched = null;
-  try {
-    const res = await fetch("https://dolarapi.com/v1/dolares/oficial", { signal: AbortSignal.timeout(5_000) });
-    if (res.ok) fetched = pickOficial(await res.json());
-  } catch { /* se usa la cache */ }
-  if (fetched) await chrome.storage.local.set({ rates: { ...fetched, at: now }, ratesFailAt: 0 });
+  if (isFresh(rates, now, RATES_TTL_MS)) {
+    let m = mep;
+    if (!isFresh(mep, now, RATES_TTL_MS) && shouldFetchRates(ratesFailAt, now)) {
+      m = (await fetchRate("bolsa")) ?? mep;
+      if (m && m !== mep) await chrome.storage.local.set({ mep: { ...m, at: now } });
+    }
+    return combineRates({ venta: rates.venta, fecha: rates.fecha, stale: false }, m);
+  }
+  if (!shouldFetchRates(ratesFailAt, now)) return combineRates(chooseRates(rates, null, now), mep);
+  const [oficial, bolsa] = await Promise.all([fetchRate("oficial"), fetchRate("bolsa")]);
+  if (oficial) await chrome.storage.local.set({ rates: { ...oficial, at: now }, ratesFailAt: 0 });
   else await chrome.storage.local.set({ ratesFailAt: now });
-  return chooseRates(rates, fetched, now);
+  if (bolsa) await chrome.storage.local.set({ mep: { ...bolsa, at: now } });
+  return combineRates(chooseRates(rates, oficial, now), bolsa ?? mep);
 }
 
 async function pruneFees() {
