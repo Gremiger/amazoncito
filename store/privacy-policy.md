@@ -35,4 +35,4 @@ Amazon.com, Inc. o sus afiliadas.
 
 ## Contacto
 
-[COMPLETAR: email de contacto]
+sngremiger@gmail.com
