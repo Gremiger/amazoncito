@@ -16,7 +16,8 @@ abrir el popover "Details", y destaca el umbral de **envío gratis a partir de U
 - En la ficha del producto aparece un recuadro con el total, sin clicks.
 - En el carrito se ve el progreso hacia USD 99 y un total estimado del pedido.
 - El dato principal es USD (el usuario paga con tarjeta usando dólares propios).
-  Secundario y ocultable: equivalente en ARS al dólar oficial y con percepciones.
+  Debajo, visible por defecto (ocultable): el resultado en ARS pagando en pesos, con
+  las percepciones del perfil del usuario (Río Cuarto, Córdoba) ya aplicadas.
 - Fuera de Argentina la extensión no hace nada.
 
 ### Fuera de alcance (YAGNI)
@@ -37,6 +38,15 @@ abrir el popover "Details", y destaca el umbral de **envío gratis a partir de U
   un navegador limpio). El idioma también varía (labels en inglés o español).
 - dolarapi.com: `/v1/dolares/oficial` (venta 1540) y `/v1/dolares/tarjeta`
   (venta 2002 = oficial × 1,30, es decir solo la percepción de Ganancias 30 %).
+- Listado: el texto de envío está en `[data-cy="delivery-recipe"]`; los ítems elegibles
+  dicen "FREE delivery … to Argentina on $99 of eligible items" (sin fetch).
+- Ficha elegible: "FREE delivery … to Argentina on eligible orders over $99" en
+  `#mir-layout-DELIVERY_BLOCK`. Aun así el popover cobra el envío por unidad
+  (p. ej. $9.99 + $26.94 + $7.76 = $44.69): el envío gratis solo aplica al llegar a 99.
+- Ficha que no envía: "This item cannot be shipped to your selected delivery location",
+  sin popover.
+- Ítem con envío gratis propio: popover con AmazonGlobal Shipping $0.00.
+- El popover aparece duplicado en el HTML (dos `table.a-lineitem` idénticas): se usa la primera.
 
 ## Arquitectura
 
@@ -79,9 +89,14 @@ Los módulos de `lib/` son ES modules; los content scripts (clásicos) los carga
   - `oficial = totalUsd × oficial.venta`
   - `conPercepciones = totalUsd × oficial.venta × (1 + ganancias% + iibb%)`
 - **Configuración (`chrome.storage.sync`), defaults:**
-  - `mostrarArs`: true (se ve en un tooltip/línea chica, no compite con USD)
-  - `percepcionGanancias`: 30
-  - `percepcionIibb`: 0 (depende de la provincia; el usuario la ajusta)
+  - `mostrarArs`: true (línea chica gris bajo el USD, visible de entrada)
+  - Perfil por defecto **Río Cuarto, Córdoba**:
+    - `percepcionGanancias`: 30 (RG ARCA, coincide con dólar tarjeta de dolarapi)
+    - `percepcionIibb`: 0 — no se encontró percepción de IIBB de Córdoba sobre compras
+      de bienes en el exterior con tarjeta (la del 3 % es para pagos a sujetos del
+      exterior, p. ej. servicios digitales). Editable si el resumen muestra otra cosa.
+  - La línea ARS se rotula con el perfil: `Pagando en pesos (Córdoba): ARS X`
+    (`= oficial × (1 + 30 % + IIBB %)`), y en tooltip el desglose oficial / percepciones.
   - `concurrencia`: 3
   - `modoListado`: `"auto"` (fetch al hacerse visible) | `"hover"` (solo al pasar el
     mouse / click en "Calcular total") — válvula de escape ante captchas.
@@ -99,8 +114,10 @@ reconvierte (la tasa de Amazon no es la del usuario).
 - `parseFreeShippingEligible(doc)`: busca en la ficha el mensaje de envío gratis
   AmazonGlobal para pedidos que superan USD 99 (texto en inglés o español). El patrón
   exacto se fija con fixtures reales en la implementación.
-- **Listado:** ítems elegibles llevan una etiqueta verde destacada "Envío gratis ≥ USD 99".
-  Si el precio del ítem solo ya supera 99, el badge lo dice ("Este solo ya llega").
+- **Listado:** la elegibilidad se lee del texto de la tarjeta (sin fetch). Ítems elegibles
+  llevan una etiqueta verde destacada "Envío gratis ≥ USD 99" y, además del total,
+  muestran `Con envío gratis: USD (total − shipping)`. Si el precio solo ya supera 99,
+  la etiqueta dice "Este solo ya llega a 99".
 - **Ficha:** el recuadro indica elegibilidad y cuánto falta para 99 con este ítem.
 - **Carrito:** barra de progreso con el subtotal de ítems elegibles: "Te faltan USD X
   para envío gratis" / "Envío gratis alcanzado". Total estimado del carrito como suma
