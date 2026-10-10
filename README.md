@@ -50,16 +50,13 @@ de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 ### Firefox y Zen
 
-1. **Descargá** [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip)
-   y descomprimilo en una carpeta que no vayas a borrar.
-2. Abrí `about:debugging#/runtime/this-firefox` y tocá **"Cargar complemento temporal…"**
-   (Load Temporary Add-on). Elegí el archivo `manifest.json` de la carpeta.
-3. Si se abren las Opciones con el aviso **"necesita acceso a amazon.com"**, tocá **"Dar acceso"**.
-4. Entrá a [amazon.com](https://www.amazon.com) con la **ubicación de entrega en Argentina**.
+1. Abrí [amazoncito.xpi](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.xpi)
+   desde Firefox o Zen y aceptá la instalación. Si se descarga en vez de instalarse, arrastrá el
+   archivo a una ventana del navegador.
+2. Si se abren las Opciones con el aviso **"necesita acceso a amazon.com"**, tocá **"Dar acceso"**.
+3. Entrá a [amazon.com](https://www.amazon.com) con la **ubicación de entrega en Argentina**.
 
-> ⚠️ Firefox borra los complementos temporales al cerrarse: hay que repetir el paso 2 cada vez que
-> abrís el navegador. Para que quede instalada de forma permanente, la extensión tiene que estar
-> firmada por Mozilla (ver [Desarrollo](#desarrollo)).
+La extensión está firmada por Mozilla, así que queda instalada de forma permanente.
 
 ## Configuración
 
@@ -77,6 +74,9 @@ Cuando haya una versión nueva:
 1. Descargá de nuevo [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip).
 2. Reemplazá el contenido de tu carpeta con el del zip nuevo.
 3. En la página de extensiones, tocá el ícono de recargar (↻) de Amazoncito.
+
+En Firefox y Zen alcanza con abrir de nuevo [amazoncito.xpi](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.xpi)
+y aceptar: se instala encima de la anterior, sin perder la configuración.
 
 Las versiones y sus cambios están en [Releases](https://github.com/Gremiger/amazoncito/releases).
 
@@ -111,9 +111,13 @@ npm run pack:firefox  # arma dist/amazoncito-firefox-<versión>.zip para firmar 
 ```
 
 Para Firefox: `npx web-ext lint` valida la extensión y `npx web-ext run` la abre en un Firefox
-limpio. Para instalarla de forma permanente hay que firmarla en [addons.mozilla.org](https://addons.mozilla.org/developers/)
-(puede ser "unlisted", sin publicarla en la tienda): `npx web-ext sign --channel=unlisted` con las claves
-de la API de AMO, y se instala el `.xpi` resultante arrastrándolo al navegador.
+limpio.
 
-Para publicar una versión nueva: subir `version` en `manifest.json`, `npm run pack` y crear el
-release con el zip renombrado a `amazoncito.zip` (así el link de descarga siempre apunta al último).
+Para publicar una versión nueva:
+
+1. Subir `version` en `manifest.json` (Mozilla no acepta dos veces la misma).
+2. `npm run pack` y `npm run pack:firefox`.
+3. Subir el zip de Firefox en [addons.mozilla.org](https://addons.mozilla.org/developers/addon/3092086/versions)
+   como "unlisted" y bajar el `.xpi` firmado.
+4. Crear el release con `amazoncito.zip` y `amazoncito.xpi` (con esos nombres, así los links de
+   descarga siempre apuntan al último).

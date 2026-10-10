@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { isNewer, pickLatest, updateToShow } from "../lib/update.js";
+import { isNewer, pickLatest, updateToShow, downloadUrl, DOWNLOAD_URL, FIREFOX_DOWNLOAD_URL } from "../lib/update.js";
 import { docFrom } from "./helpers.js";
 import { renderUpdateBanner } from "../content/update-banner.js";
 
@@ -42,4 +42,9 @@ test("banner: versión, descarga, cómo actualizar y cerrar", () => {
   b.querySelector("button").dispatchEvent(new doc.defaultView.Event("click"));
   assert.equal(dismissed, "0.2.0");
   assert.equal(b.isConnected, false);
+});
+
+test("downloadUrl: .xpi en Firefox, .zip en Chrome", () => {
+  assert.equal(downloadUrl("moz-extension://1234-abcd/"), FIREFOX_DOWNLOAD_URL);
+  assert.equal(downloadUrl("chrome-extension://abcdef/"), DOWNLOAD_URL);
 });
