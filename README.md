@@ -2,7 +2,7 @@
 
 # Amazoncito
 
-Extensión para Chrome, Arc, Brave y Edge que te muestra en **amazon.com** cuánto te cuesta
+Extensión para Chrome, Arc, Brave, Edge, Firefox y Zen que te muestra en **amazon.com** cuánto te cuesta
 de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 ![Listado con totales](store/screenshots/1-listado.png)
@@ -28,6 +28,8 @@ de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 ## Instalación
 
+### Chrome, Arc, Brave y Edge
+
 1. **Descargá** [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip).
 2. **Descomprimilo** en una carpeta que no vayas a borrar (por ejemplo, `Documentos/amazoncito`).
    ⚠️ El navegador la usa desde ahí: si la borrás o la movés, la extensión deja de funcionar.
@@ -45,6 +47,19 @@ de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 > El navegador puede mostrar un aviso sobre extensiones en modo desarrollador: es normal en las
 > extensiones que no vienen de la tienda.
+
+### Firefox y Zen
+
+1. **Descargá** [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip)
+   y descomprimilo en una carpeta que no vayas a borrar.
+2. Abrí `about:debugging#/runtime/this-firefox` y tocá **"Cargar complemento temporal…"**
+   (Load Temporary Add-on). Elegí el archivo `manifest.json` de la carpeta.
+3. Si se abren las Opciones con el aviso **"necesita acceso a amazon.com"**, tocá **"Dar acceso"**.
+4. Entrá a [amazon.com](https://www.amazon.com) con la **ubicación de entrega en Argentina**.
+
+> ⚠️ Firefox borra los complementos temporales al cerrarse: hay que repetir el paso 2 cada vez que
+> abrís el navegador. Para que quede instalada de forma permanente, la extensión tiene que estar
+> firmada por Mozilla (ver [Desarrollo](#desarrollo)).
 
 ## Configuración
 
@@ -92,7 +107,13 @@ Amazoncito no está afiliado a Amazon.com, Inc.
 npm install
 npm test          # tests con node --test y fixtures reales de Amazon
 npm run pack      # arma dist/amazoncito-<versión>.zip
+npm run pack:firefox  # arma dist/amazoncito-firefox-<versión>.zip para firmar en AMO
 ```
+
+Para Firefox: `npx web-ext lint` valida la extensión y `npx web-ext run` la abre en un Firefox
+limpio. Para instalarla de forma permanente hay que firmarla en [addons.mozilla.org](https://addons.mozilla.org/developers/)
+(puede ser "unlisted", sin publicarla en la tienda): `npx web-ext sign --channel=unlisted` con las claves
+de la API de AMO, y se instala el `.xpi` resultante arrastrándolo al navegador.
 
 Para publicar una versión nueva: subir `version` en `manifest.json`, `npm run pack` y crear el
 release con el zip renombrado a `amazoncito.zip` (así el link de descarga siempre apunta al último).

@@ -1,5 +1,12 @@
 import { DEFAULTS, mergeSettings } from "./lib/settings.js";
 import { isNewer, DOWNLOAD_URL, HOWTO_URL } from "./lib/update.js";
+import { hasHostPermissions, requestHostPermissions } from "./lib/permissions.js";
+
+const permisos = document.getElementById("permisos");
+permisos.hidden = await hasHostPermissions();
+document.getElementById("otorgar").addEventListener("click", async () => {
+  if (await requestHostPermissions()) permisos.hidden = true;
+});
 
 const s = mergeSettings(await chrome.storage.sync.get(null));
 for (const key of Object.keys(DEFAULTS)) {

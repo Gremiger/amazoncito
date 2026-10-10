@@ -1,5 +1,6 @@
 import { pickLatest, LATEST_API, UPDATE_TTL_MS } from "./lib/update.js";
 import { pickOficial, chooseRates, combineRates, isFresh, shouldFetchRates, RATES_TTL_MS, FEE_TTL_MS } from "./lib/cache.js";
+import { hasHostPermissions } from "./lib/permissions.js";
 
 async function fetchRate(casa) {
   try {
@@ -54,4 +55,8 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type === "latestRelease") { getLatestRelease().then(sendResponse); return true; }
 });
 chrome.runtime.onStartup.addListener(pruneFees);
-chrome.runtime.onInstalled.addListener(pruneFees);
+chrome.runtime.onInstalled.addListener(async () => {
+  await pruneFees();
+  // Sin acceso a amazon.com no se ve nada: se abren las Opciones, que tienen el botón para darlo.
+  if (!(await hasHostPermissions())) chrome.runtime.openOptionsPage();
+});
