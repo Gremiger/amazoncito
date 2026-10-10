@@ -1,5 +1,12 @@
 import { DEFAULTS, mergeSettings } from "./lib/settings.js";
-import { isNewer, DOWNLOAD_URL, HOWTO_URL } from "./lib/update.js";
+import { isNewer, downloadUrl, HOWTO_URL } from "./lib/update.js";
+import { hasHostPermissions, requestHostPermissions } from "./lib/permissions.js";
+
+const permisos = document.getElementById("permisos");
+permisos.hidden = await hasHostPermissions();
+document.getElementById("otorgar").addEventListener("click", async () => {
+  if (await requestHostPermissions()) permisos.hidden = true;
+});
 
 const s = mergeSettings(await chrome.storage.sync.get(null));
 for (const key of Object.keys(DEFAULTS)) {
@@ -20,7 +27,7 @@ v.textContent = `Versión ${current}`;
 if (latest && isNewer(latest.version, current)) {
   v.append(" — hay una nueva: ");
   const a = document.createElement("a");
-  a.href = DOWNLOAD_URL; a.textContent = `descargar ${latest.version}`; a.target = "_blank";
+  a.href = downloadUrl(chrome.runtime.getURL("")); a.textContent = `descargar ${latest.version}`; a.target = "_blank";
   const h = document.createElement("a");
   h.href = HOWTO_URL; h.textContent = "cómo actualizar"; h.target = "_blank";
   v.append(a, " · ", h);

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "pack": "sh scripts/pack.sh"
+    "pack": "sh scripts/pack.sh",
+    "pack:firefox": "npx --yes web-ext build --overwrite-dest --artifacts-dir dist --filename \"amazoncito-firefox-{version}.zip\" --ignore-files node_modules test docs store scripts \"package*.json\" README.md \"icons/*.svg\" dist"
   },
   "devDependencies": {
     "linkedom": "^0.18.0"

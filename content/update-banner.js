@@ -9,11 +9,11 @@ function link(doc, text, href) {
   return a;
 }
 
-export function renderUpdateBanner(doc, { version }, onDismiss) {
+export function renderUpdateBanner(doc, { version, download = DOWNLOAD_URL }, onDismiss) {
   const bar = doc.createElement("div");
   bar.className = "amzar amzar-update";
   bar.dataset.amzarBadge = "1";
-  bar.append(`⬆ Hay una versión nueva de Amazoncito (${version}) · `, link(doc, "Descargar", DOWNLOAD_URL), " · ",
+  bar.append(`⬆ Hay una versión nueva de Amazoncito (${version}) · `, link(doc, "Descargar", download), " · ",
     link(doc, "Cómo actualizar", HOWTO_URL));
   const close = doc.createElement("button");
   close.type = "button";

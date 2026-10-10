@@ -2,7 +2,7 @@
 
 # Amazoncito
 
-Extensión para Chrome, Arc, Brave y Edge que te muestra en **amazon.com** cuánto te cuesta
+Extensión para Chrome, Arc, Brave, Edge, Firefox y Zen que te muestra en **amazon.com** cuánto te cuesta
 de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 ![Listado con totales](store/screenshots/1-listado.png)
@@ -28,6 +28,8 @@ de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 
 ## Instalación
 
+### Chrome, Arc, Brave y Edge
+
 1. **Descargá** [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip).
 2. **Descomprimilo** en una carpeta que no vayas a borrar (por ejemplo, `Documentos/amazoncito`).
    ⚠️ El navegador la usa desde ahí: si la borrás o la movés, la extensión deja de funcionar.
@@ -46,6 +48,16 @@ de verdad traer cada producto a Argentina, sin tener que abrirlo uno por uno.
 > El navegador puede mostrar un aviso sobre extensiones en modo desarrollador: es normal en las
 > extensiones que no vienen de la tienda.
 
+### Firefox y Zen
+
+1. Abrí [amazoncito.xpi](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.xpi)
+   desde Firefox o Zen y aceptá la instalación. Si se descarga en vez de instalarse, arrastrá el
+   archivo a una ventana del navegador.
+2. Si se abren las Opciones con el aviso **"necesita acceso a amazon.com"**, tocá **"Dar acceso"**.
+3. Entrá a [amazon.com](https://www.amazon.com) con la **ubicación de entrega en Argentina**.
+
+La extensión está firmada por Mozilla, así que queda instalada de forma permanente.
+
 ## Configuración
 
 Desde la página de extensiones → Amazoncito → **Detalles** → **Opciones de la extensión**:
@@ -62,6 +74,9 @@ Cuando haya una versión nueva:
 1. Descargá de nuevo [amazoncito.zip](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.zip).
 2. Reemplazá el contenido de tu carpeta con el del zip nuevo.
 3. En la página de extensiones, tocá el ícono de recargar (↻) de Amazoncito.
+
+En Firefox y Zen alcanza con abrir de nuevo [amazoncito.xpi](https://github.com/Gremiger/amazoncito/releases/latest/download/amazoncito.xpi)
+y aceptar: se instala encima de la anterior, sin perder la configuración.
 
 Las versiones y sus cambios están en [Releases](https://github.com/Gremiger/amazoncito/releases).
 
@@ -92,7 +107,17 @@ Amazoncito no está afiliado a Amazon.com, Inc.
 npm install
 npm test          # tests con node --test y fixtures reales de Amazon
 npm run pack      # arma dist/amazoncito-<versión>.zip
+npm run pack:firefox  # arma dist/amazoncito-firefox-<versión>.zip para firmar en AMO
 ```
 
-Para publicar una versión nueva: subir `version` en `manifest.json`, `npm run pack` y crear el
-release con el zip renombrado a `amazoncito.zip` (así el link de descarga siempre apunta al último).
+Para Firefox: `npx web-ext lint` valida la extensión y `npx web-ext run` la abre en un Firefox
+limpio.
+
+Para publicar una versión nueva:
+
+1. Subir `version` en `manifest.json` (Mozilla no acepta dos veces la misma).
+2. `npm run pack` y `npm run pack:firefox`.
+3. Subir el zip de Firefox en [addons.mozilla.org](https://addons.mozilla.org/developers/addon/3092086/versions)
+   como "unlisted" y bajar el `.xpi` firmado.
+4. Crear el release con `amazoncito.zip` y `amazoncito.xpi` (con esos nombres, así los links de
+   descarga siempre apuntan al último).
