@@ -43,3 +43,10 @@ test("settings: noEnvia por defecto atenuar y solo valores válidos", () => {
   assert.equal(mergeSettings({ noEnvia: "ocultar" }).noEnvia, "ocultar");
   assert.equal(mergeSettings({ noEnvia: "cualquiera" }).noEnvia, "atenuar");
 });
+
+test("settings: percepciones se acotan a 0–100", () => {
+  assert.equal(mergeSettings({ percepcionIibb: -5 }).percepcionIibb, 0);
+  assert.equal(mergeSettings({ percepcionGanancias: 500 }).percepcionGanancias, 100);
+  assert.equal(mergeSettings({ percepcionGanancias: "" }).percepcionGanancias, 30);
+  assert.equal(mergeSettings({ percepcionIibb: "3.5" }).percepcionIibb, 3.5);
+});

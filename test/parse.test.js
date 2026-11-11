@@ -52,6 +52,8 @@ test("precio 99.99 en la tarjeta no implica elegibilidad", () => {
 test("captcha", () => {
   assert.equal(isCaptcha(docFrom(`<form action="/errors/validateCaptcha"></form>`)), true);
   assert.equal(isCaptcha(loadFixture("product-usd-paid-shipping.html")), false);
+  assert.equal(isCaptcha(docFrom(`<p>Enter the characters you see below</p>`)), true);
+  assert.equal(isCaptcha(docFrom(`<div id="dp">Enter the characters you see below</div>`)), false);
 });
 test("elegibilidad con montos en ARS", () => {
   assert.equal(parseFreeShippingEligible(docFrom(`<div id="mir-layout-DELIVERY_BLOCK">FREE delivery Wednesday, October 21 to Argentina on eligible orders over ARS 150,133.50</div>`)), true);

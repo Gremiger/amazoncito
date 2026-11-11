@@ -13,6 +13,7 @@ function el(doc, tag, cls, txt) {
 function toggleButton(doc, label, value, onToggleArs) {
   const btn = el(doc, "button", "amzar-toggle", label);
   btn.type = "button";
+  btn.setAttribute("aria-label", value ? "Ver pesos" : "Ocultar pesos");
   btn.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); onToggleArs?.(value); });
   return btn;
 }

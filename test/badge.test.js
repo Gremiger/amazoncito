@@ -89,3 +89,8 @@ test("pesos ocultos: botón para volver a verlos", () => {
 test("estado throttled", () => {
   assert.match(renderBadge(doc, { status: "throttled" }, ctx).textContent, /Amazon está limitando pedidos/);
 });
+
+test("botón de pesos con aria-label", () => {
+  const b = renderBadge(doc, { status: "ok", fee, eligible: false }, ctx);
+  assert.equal(b.querySelector(".amzar-toggle").getAttribute("aria-label"), "Ocultar pesos");
+});
