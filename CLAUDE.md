@@ -76,6 +76,8 @@ sobre la raíz del repo; en Firefox, `npx web-ext run`. Siempre con amazon.com y
 Un solo `manifest.json` sirve para los dos navegadores:
 - `background` declara `service_worker` (Chrome) y `scripts` (Firefox, que no tiene service workers
   en extensiones); cada navegador usa la suya.
+  Chrome marca `scripts` como error: `scripts/pack.sh` lo saca del zip de Chromium. Cargando el repo
+  descomprimido en Chrome la advertencia aparece igual y es inofensiva.
 - `browser_specific_settings.gecko`: id `amazoncito@gremiger`, Firefox ≥ 142,
   `data_collection_permissions: none`.
 - En Firefox MV3 los `host_permissions` pueden quedar sin otorgar: `lib/permissions.js` lo detecta,
