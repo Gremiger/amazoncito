@@ -1,6 +1,6 @@
 import { resultFromDoc, putFee } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
-import { getSettings, setSetting, getRates, withAmazonRate, getUpdate, dismissUpdate } from "./store.js";
+import { getSettings, setSetting, onSettingsChange, getRates, withAmazonRate, getUpdate, dismissUpdate } from "./store.js";
 import { renderUpdateBanner } from "./update-banner.js";
 import { pageCurrency, normalizeFee } from "../lib/currency.js";
 import { freeShippingGap } from "../lib/calc.js";
@@ -15,7 +15,7 @@ export default async function runProduct() {
   const settings = await getSettings();
   const ctx = {
     settings, rates: null, variant: "box",
-    onToggleArs: async (v) => { await setSetting("mostrarArs", v); location.reload(); },
+    onToggleArs: (v) => setSetting("mostrarArs", v),
   };
   let box = null;
   let lastKey = null;
@@ -45,6 +45,7 @@ export default async function runProduct() {
 
   ctx.rates = await getRates((late) => { ctx.rates = late; lastKey = null; render(); });
   await render();
+  onSettingsChange(settings, () => { lastKey = null; render(); });
   const update = await getUpdate().catch(() => null);
   if (update) document.querySelector("#centerCol, #ppd")?.prepend(renderUpdateBanner(document, update, dismissUpdate));
   // Al elegir otra variante Amazon reemplaza precio y popover por AJAX, sin recargar.

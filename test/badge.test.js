@@ -89,3 +89,17 @@ test("pesos ocultos: botón para volver a verlos", () => {
 test("estado throttled", () => {
   assert.match(renderBadge(doc, { status: "throttled" }, ctx).textContent, /Amazon está limitando pedidos/);
 });
+
+test("botón de pesos con aria-label", () => {
+  const b = renderBadge(doc, { status: "ok", fee, eligible: false }, ctx);
+  assert.equal(b.querySelector(".amzar-toggle").getAttribute("aria-label"), "Ocultar pesos");
+});
+
+test("precio al MEP arriba del total, oculto sin pesos", () => {
+  const c = { ...ctx, rates: { ...ctx.rates, mep: { venta: 1500 } } };
+  const t = renderBadge(doc, { status: "ok", fee, eligible: false }, c).textContent;
+  assert.match(t, /Precio al MEP: ARS 583\.500Total a AR/);
+  const off = { ...c, settings: { ...DEFAULTS, mostrarArs: false } };
+  assert.doesNotMatch(renderBadge(doc, { status: "ok", fee, eligible: false }, off).textContent, /Precio al MEP/);
+});
+

@@ -6,6 +6,14 @@ export async function getSettings() {
   return mergeSettings(await chrome.storage.sync.get(null));
 }
 export const setSetting = (key, value) => chrome.storage.sync.set({ [key]: value });
+// Mantiene `settings` al día con lo que se cambie en Opciones u otra pestaña, y avisa para redibujar.
+export function onSettingsChange(settings, cb) {
+  chrome.storage.onChanged.addListener(async (_changes, area) => {
+    if (area !== "sync") return;
+    Object.assign(settings, await getSettings());
+    cb();
+  });
+}
 const RATES_WAIT_MS = 1500;
 // Nunca bloquear los badges por la cotización: si tarda, se sigue sin la línea ARS y, cuando llega,
 // se avisa por `onLate` para completar lo ya dibujado.

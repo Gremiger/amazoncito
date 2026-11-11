@@ -1,6 +1,6 @@
 import { parseCart } from "../lib/parse.js";
 import { getFee } from "./fetcher.js";
-import { getSettings, getRates, withAmazonRate } from "./store.js";
+import { getSettings, onSettingsChange, getRates, withAmazonRate } from "./store.js";
 import { pageCurrency } from "../lib/currency.js";
 import { COURIER } from "../lib/courier.js";
 import { freeShippingGap, arsBreakdown, summarizeCart, FREE_THRESHOLD } from "../lib/calc.js";
@@ -75,6 +75,7 @@ export default async function runCart() {
   box.textContent = "Calculando total a AR…";
   rates = await getRates((late) => { rates = late; render(); });
   await render();
+  onSettingsChange(settings, render);
   // El carrito se actualiza por AJAX al cambiar cantidades.
   const cart = document.querySelector("#sc-active-cart");
   if (cart) {

@@ -12,6 +12,12 @@ const THROTTLE_PAUSE_MS = 2 * 60 * 1000;
 export const classifyResponse = (status) => (status === 503 || status === 429 ? "throttled" : "ok");
 let queue = null;
 
+// Cuánto esperar para reintentar un resultado pausado (captcha o límite), o null si no se reintenta.
+export function retryDelay(result, pause, now) {
+  if (result.status !== "captcha" && result.status !== "throttled") return null;
+  return Math.max(1000, (pause?.until ?? 0) - now);
+}
+
 export function resultFromDoc(doc) {
   if (isCaptcha(doc)) return { status: "captcha" };
   const fee = parseFeeDetails(doc);

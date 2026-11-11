@@ -1,8 +1,8 @@
 import { findCards, parseListingCard, priceAnchor } from "../lib/parse.js";
 import { slotsFor, sortKey, placeInOrder } from "../lib/sort.js";
-import { getFee, learnFromPrices } from "./fetcher.js";
+import { getFee, learnFromPrices, retryDelay } from "./fetcher.js";
 import { renderBadge } from "./badge.js";
-import { getSettings, setSetting, getRates, withAmazonRate, getUpdate, dismissUpdate } from "./store.js";
+import { getSettings, setSetting, onSettingsChange, getRates, withAmazonRate, getUpdate, dismissUpdate, localGet } from "./store.js";
 import { renderUpdateBanner } from "./update-banner.js";
 import { pageCurrency, toPageCurrency } from "../lib/currency.js";
 
@@ -14,7 +14,7 @@ export default async function runListing() {
   const currency = pageCurrency(document.cookie);
   const ctx = {
     settings, rates: null, variant: "card",
-    onToggleArs: async (v) => { await setSetting("mostrarArs", v); location.reload(); },
+    onToggleArs: (v) => setSetting("mostrarArs", v),
   };
   const loaded = new Map(); // card → { result, eligible, asin }
   const loading = new Map(); // card → Promise
@@ -47,6 +47,8 @@ export default async function runListing() {
       if (info.price?.currency === "ARS" && result.fee?.currency === "USD") await learnFromPrices(info.price.amount, result.fee.price);
       loaded.set(card, { ...result, eligible: result.eligible || info.freeEligible, asin: info.asin });
       await render(card);
+      const ms = retryDelay(result, await localGet("pausedUntil"), Date.now());
+      if (ms != null) setTimeout(() => { if (card.isConnected) { loading.delete(card); load(card); } }, ms);
     })());
     return loading.get(card);
   };
@@ -56,6 +58,7 @@ export default async function runListing() {
     ctx.rates = late;
     for (const card of loaded.keys()) if (card.isConnected) render(card);
   });
+  onSettingsChange(settings, () => { for (const card of loaded.keys()) if (card.isConnected) render(card); });
 
   const update = await getUpdate().catch(() => null);
 
