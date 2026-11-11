@@ -65,7 +65,9 @@ sobre la raíz del repo; en Firefox, `npx web-ext run`. Siempre con amazon.com y
 1. Subir `version` en `manifest.json` (la leen `pack.sh`, web-ext y el aviso de actualización;
    Mozilla no acepta dos veces la misma).
 2. `npm run pack` y `npm run pack:firefox`.
-3. Subir el zip de Firefox a AMO como "unlisted" y bajar el `.xpi` firmado.
+3. Firmar en AMO ("unlisted"): las credenciales están en `.env` (ignorado por git):
+   `set -a; . ./.env; set +a; npx web-ext sign --channel unlisted --artifacts-dir dist --ignore-files node_modules test docs store scripts "package*.json" README.md CLAUDE.md "icons/*.svg" dist`
+   deja el `.xpi` firmado en `dist/`.
 4. Crear el release en GitHub con `amazoncito.zip` y `amazoncito.xpi`, con esos nombres exactos: el
    README y el aviso apuntan a `releases/latest/download/amazoncito.{zip,xpi}`.
 
