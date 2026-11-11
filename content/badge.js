@@ -89,6 +89,11 @@ export function renderBadge(doc, state, ctx) {
   }
   const fmt = n.currency === "ARS" ? fmtArs : fmtUsd;
   if (ctx.variant === "box") root.append(breakdownTable(doc, n, fmt));
+  // Precio del producto solo (sin envío ni importación) al MEP, chico, debajo del de Amazon.
+  if (ctx.settings.mostrarArs && ctx.rates?.mep && n.usd) {
+    root.append(el(doc, "div", "amzar-muted",
+      `Precio al MEP: ${n.approx ? "≈ " : ""}${fmtArs(n.usd.price * ctx.rates.mep.venta)}`));
+  }
   root.append(el(doc, "div", "amzar-total", `Total a AR: ${fmt(n.total)}`));
   if (n.currency === "ARS" && n.usd) {
     root.append(el(doc, "div", "amzar-muted",
